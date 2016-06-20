@@ -26,7 +26,7 @@
 #define CTRL3_C               0x12
 #define CTRL4_C               0x13
 #define CTRL5_C               0x14
-#define CTRL6_G               0x15
+#define CTRL6_C               0x15
 #define CTRL7_G               0x16
 #define CTRL8_XL              0x17
 #define CTRL9_XL              0x18
@@ -98,6 +98,7 @@ public:
     {
         G_SCALE_245DPS = 0x0 << 3,     // 00 << 3: +/- 245 degrees per second
         G_SCALE_500DPS = 0x1 << 3,     // 01 << 3: +/- 500 dps
+        G_SCALE_1000DPS = 0x2 << 3,    // 10 << 3: +/- 1000 dps
         G_SCALE_2000DPS = 0x3 << 3     // 11 << 3: +/- 2000 dps
     };
 
@@ -105,22 +106,14 @@ public:
     enum gyro_odr
     {                               // ODR (Hz) --- Cutoff
         G_POWER_DOWN     = 0x00,    //  0           0
-        G_ODR_15_BW_0    = 0x20,    //  14.9        0
-        G_ODR_60_BW_16   = 0x40,    //  59.5        16
-        G_ODR_119_BW_14  = 0x60,    //  119         14
-        G_ODR_119_BW_31  = 0x61,    //  119         31
-        G_ODR_238_BW_14  = 0x80,    //  238         14
-        G_ODR_238_BW_29  = 0x81,    //  238         29
-        G_ODR_238_BW_63  = 0x82,    //  238         63
-        G_ODR_238_BW_78  = 0x83,    //  238         78
-        G_ODR_476_BW_21  = 0xA0,    //  476         21
-        G_ODR_476_BW_28  = 0xA1,    //  476         28
-        G_ODR_476_BW_57  = 0xA2,    //  476         57
-        G_ODR_476_BW_100 = 0xA3,    //  476         100
-        G_ODR_952_BW_33  = 0xC0,    //  952         33
-        G_ODR_952_BW_40  = 0xC1,    //  952         40
-        G_ODR_952_BW_58  = 0xC2,    //  952         58
-        G_ODR_952_BW_100 = 0xC3     //  952         100
+        G_ODR_13_BW_0    = 0x10,    //  12.5        0.0081      low power
+        G_ODR_26_BW_2    = 0x20,    //  26          2.07        low power
+        G_ODR_52_BW_16   = 0x30,    //  52          16.32       low power
+        G_ODR_104        = 0x40,    //  104         
+        G_ODR_208        = 0x50,    //  208         
+        G_ODR_416        = 0x60,    //  416         
+        G_ODR_833        = 0x70,    //  833         
+        G_ODR_1660       = 0x80     //  1660
     };
 
     /// accel_scale defines all possible FSR's of the accelerometer:
@@ -136,12 +129,16 @@ public:
     enum accel_odr
     {
         A_POWER_DOWN,   // Power-down mode (0x0)
-        A_ODR_10,       // 10 Hz (0x1)
-        A_ODR_50,       // 50 Hz (0x2)
-        A_ODR_119,      // 119 Hz (0x3)
-        A_ODR_238,      // 238 Hz (0x4)
-        A_ODR_476,      // 476 Hz (0x5)
-        A_ODR_952       // 952 Hz (0x6)
+        A_ODR_13,       // 12.5 Hz (0x1)        low power
+        A_ODR_26,       // 26 Hz (0x2)          low power
+        A_ODR_52,       // 52 Hz (0x3)          low power
+        A_ODR_104,      // 104 Hz (0x4)         normal mode
+        A_ODR_208,      // 208 Hz (0x5)         normal mode
+        A_ODR_416,      // 416 Hz (0x6)         high performance
+        A_ODR_833,      // 833 Hz (0x7)         high performance
+        A_ODR_1660,     // 1.66 kHz (0x8)       high performance
+        A_ODR_3330,     // 3.33 kHz (0x9)       high performance
+        A_ODR_6660,     // 6.66 kHz (0xA)       high performance
     };
 
     // accel_bw defines all possible bandwiths for low-pass filter of the accelerometer:
@@ -196,8 +193,8 @@ public:
     *  Use the return value of this function to verify communication.
     */
     uint16_t begin(gyro_scale gScl = G_SCALE_245DPS, 
-                accel_scale aScl = A_SCALE_2G, gyro_odr gODR = G_ODR_119_BW_14, 
-                accel_odr aODR = A_ODR_119);
+                accel_scale aScl = A_SCALE_2G, gyro_odr gODR = G_ODR_104, 
+                accel_odr aODR = A_ODR_104);
     
     /**  readGyro() -- Read the gyroscope output registers.
     *  This function will read all six gyroscope output registers.

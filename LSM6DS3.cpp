@@ -52,7 +52,7 @@ void LSM6DS3::initGyro()
 {
     char cmd[4] = {
         CTRL2_G,
-        gScale | G_ODR_119_BW_14,
+        gScale | G_ODR_104,
         0,          // Default data out and int out
         0           // Default power mode and high pass settings
     };
@@ -66,7 +66,7 @@ void LSM6DS3::initAccel()
     char cmd[4] = {
         CTRL1_XL,
         0x38,       // Enable all axis and don't decimate data in out Registers
-        (A_ODR_119 << 5) | (aScale << 3) | (A_BW_AUTO_SCALE),   // 119 Hz ODR, set scale, and auto BW
+        (A_ODR_104 << 5) | (aScale << 3) | (A_BW_AUTO_SCALE),   // 119 Hz ODR, set scale, and auto BW
         0           // Default resolution mode and filtering settings
     };
 
@@ -238,6 +238,24 @@ void LSM6DS3::setGyroODR(gyro_odr gRate)
         CTRL2_G,
         0
     };
+    
+    // Set low power based on ODR, else keep sensor on high performance
+    if(gRate == G_ODR_13_BW_0 | gRate == G_ODR_26_BW_2 | gRate == G_ODR_52_BW_16) {
+        char cmdLow[2] ={
+            CTRL7_G,
+            1
+        };
+        
+        i2c.write(xgAddress, cmdLow, 2);
+    }
+    else {
+        char cmdLow[2] ={
+            CTRL7_G,
+            0
+        };
+        
+        i2c.write(xgAddress, cmdLow, 2);
+    }
 
     // Write the address we are going to read from and don't end the transaction
     i2c.write(xgAddress, cmd, 1, true);
@@ -260,6 +278,24 @@ void LSM6DS3::setAccelODR(accel_odr aRate)
         CTRL1_XL,
         0
     };
+    
+    // Set low power based on ODR, else keep sensor on high performance
+    if(aRate == A_ODR_13 | aRate == A_ODR_26 | aRate == A_ODR_52) {
+        char cmdLow[2] ={
+            CTRL6_C,
+            1
+        };
+        
+        i2c.write(xgAddress, cmdLow, 2);
+    }
+    else {
+        char cmdLow[2] ={
+            CTRL6_C,
+            0
+        };
+        
+        i2c.write(xgAddress, cmdLow, 2);
+    }
 
     // Write the address we are going to read from and don't end the transaction
     i2c.write(xgAddress, cmd, 1, true);
