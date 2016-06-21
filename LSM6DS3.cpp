@@ -44,6 +44,9 @@ uint16_t LSM6DS3::begin(gyro_scale gScl, accel_scale aScl,
     setAccelODR(aODR); // Set the accel data rate.
     setAccelScale(aScale); // Set the accel range.
     
+    // Interrupt initialization stuff;
+    initIntr();
+    
     // Once everything is initialized, return the WHO_AM_I registers we read:
     return xgTest;
 }
@@ -72,6 +75,27 @@ void LSM6DS3::initAccel()
 
     // Write the data to the accel control registers
     i2c.write(xgAddress, cmd, 4);
+}
+
+void LSM6DS3::initIntr()
+{
+    char cmd[2];
+    
+    cmd[0] = TAP_CFG;
+    cmd[1] = 0x0E;
+    i2c.write(xgAddress, cmd, 2);
+    cmd[0] = TAP_THS_6D;
+    cmd[1] = 0x03;
+    i2c.write(xgAddress, cmd, 2);
+    cmd[0] = INT_DUR2;
+    cmd[1] = 0x7F;
+    i2c.write(xgAddress, cmd, 2);
+    cmd[0] = WAKE_UP_THS;
+    cmd[1] = 0x80;
+    i2c.write(xgAddress, cmd, 2);
+    cmd[0] = MD1_CFG;
+    cmd[1] = 0x48;
+    i2c.write(xgAddress, cmd, 2);
 }
 
 void LSM6DS3::readAccel()
@@ -110,6 +134,17 @@ void LSM6DS3::readAccel()
     ax = ax_raw * aRes;
     ay = ay_raw * aRes;
     az = az_raw * aRes;
+}
+
+void LSM6DS3::readIntr()
+{
+    char data[1];
+    char subAddress = TAP_SRC;
+
+    i2c.write(xgAddress, &subAddress, 1, true);
+    i2c.read(xgAddress, data, 1);
+
+    intr = (float)data[0];
 }
 
 void LSM6DS3::readTemp()

@@ -150,6 +150,8 @@ public:
         A_BW_105 = 0x6,         // 105 Hz (0x6)
         A_BW_50 = 0x7           // 50 Hz (0x7)
     };
+    
+    
 
     // We'll store the gyro, and accel, readings in a series of
     // public class variables. Each sensor gets three variables -- one for each
@@ -164,6 +166,7 @@ public:
     float gx, gy, gz;
     float ax, ay, az;
     float temperature_c, temperature_f; // temperature in celcius and fahrenheit
+    float intr;
 
     
     /**  LSM6DS3 -- LSM6DS3 class constructor
@@ -216,6 +219,9 @@ public:
     *  those _after_ calling readTemp().
     */
     void readTemp();
+    
+    /** Read Interrupt **/
+    void readIntr();
     
     /**  setGyroScale() -- Set the full-scale range of the gyroscope.
     *  This function can be called to set the scale of the gyroscope to 
@@ -280,6 +286,9 @@ private:
     *  This function steps through all accelerometer related control registers.
     */
     void initAccel();
+    
+    /** Setup Interrupt **/
+    void initIntr();
     
     /**  calcgRes() -- Calculate the resolution of the gyroscope.
     *  This function will set the value of the gRes variable. gScale must
