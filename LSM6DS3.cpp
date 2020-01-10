@@ -55,7 +55,7 @@ void LSM6DS3::initGyro()
 {
     char cmd[4] = {
         CTRL2_G,
-        gScale | G_ODR_104,
+        (const char)(gScale | G_ODR_104),
         0,          // Default data out and int out
         0           // Default power mode and high pass settings
     };
@@ -69,7 +69,7 @@ void LSM6DS3::initAccel()
     char cmd[4] = {
         CTRL1_XL,
         0x38,       // Enable all axis and don't decimate data in out Registers
-        (A_ODR_104 << 5) | (aScale << 3) | (A_BW_AUTO_SCALE),   // 119 Hz ODR, set scale, and auto BW
+        (const char)((A_ODR_104 << 5) | (aScale << 3) | (A_BW_AUTO_SCALE)),   // 119 Hz ODR, set scale, and auto BW
         0           // Default resolution mode and filtering settings
     };
 
